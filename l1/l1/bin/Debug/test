@@ -1,0 +1,11 @@
+define void Main(int A, int B) 
+ int size := a;
+ assert size = b;
+ return C;
+end;
+
+define int Test(int A, int B) 
+ int size := a;
+ assert size = b;
+ return C;
+end;
