@@ -1,0 +1,9 @@
+/home/master/Study/compiler.net/l1/l1/bin/Debug/l1.exe
+/home/master/Study/compiler.net/l1/l1/bin/Debug/l1.pdb
+/home/master/Study/compiler.net/l1/l1/obj/Debug/l1.csprojAssemblyReference.cache
+/home/master/Study/compiler.net/l1/l1/obj/Debug/l1.csproj.CoreCompileInputs.cache
+/home/master/Study/compiler.net/l1/l1/obj/Debug/l1.exe
+/home/master/Study/compiler.net/l1/l1/obj/Debug/l1.pdb
+/home/master/Study/compiler.net/l1/l1/bin/Debug/Antlr4.Runtime.Standard.dll
+/home/master/Study/compiler.net/l1/l1/bin/Debug/Antlr4.Runtime.Standard.xml
+/home/master/Study/compiler.net/l1/l1/obj/Debug/l1.csproj.CopyComplete
