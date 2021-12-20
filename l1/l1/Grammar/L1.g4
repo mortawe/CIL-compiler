@@ -1,10 +1,18 @@
 grammar L1;
 
+options {
+  language = CSharp3;
+  TokenLabelType=CommonToken;
+}
+
+@lexer::namespace {L1} 
+@parser::namespace {L1}
+ 
 program :  (function ';')+ ;
 
 function : 'define' type IDENT '(' var_list ')' function_body 'end' ;
 
-type : ( 'int' | 'char' | 'bool' ) ('array')? ;
+type : ('void'| 'int' | 'char' | 'bool' | 'int array' | 'char array' | 'bool array' );
 
 var_list :  | type IDENT (',' type IDENT )* ;
 
@@ -40,3 +48,5 @@ fragment TAB : '\t';
 fragment COMMENT: '***' ~[\r\n\f]* ;
 IDENT : (UPPERCASE|LOWERCASE) (UPPERCASE|LOWERCASE|DIGITS|'_')*  ;
 WHITESPACE : (' '| '\t' | COMMENT | '\r'? '\n' | '\r' | '\f')+ -> skip ;
+
+
