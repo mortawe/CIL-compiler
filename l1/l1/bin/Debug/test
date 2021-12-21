@@ -1,11 +1,11 @@
 define void Main(int A, int B) 
- int size := a;
- assert size = b;
- return C;
+ int m1 := 1;
+ assert m1 = 1;
+ return;
 end;
 
 define int Test(int A, int B) 
- int size := a;
- assert size = b;
- return C;
+ int m2 := 1;
+ assert m2 = 2;
+ return m2;
 end;
