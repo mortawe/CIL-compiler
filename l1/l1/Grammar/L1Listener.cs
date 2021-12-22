@@ -171,16 +171,6 @@ public interface IL1Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitStmt([NotNull] L1Parser.StmtContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="L1Parser.cond"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterCond([NotNull] L1Parser.CondContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="L1Parser.cond"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitCond([NotNull] L1Parser.CondContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -191,16 +181,6 @@ public interface IL1Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitExpr([NotNull] L1Parser.ExprContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="L1Parser.xor_expr"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterXor_expr([NotNull] L1Parser.Xor_exprContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="L1Parser.xor_expr"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitXor_expr([NotNull] L1Parser.Xor_exprContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.and_expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -210,6 +190,16 @@ public interface IL1Listener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitAnd_expr([NotNull] L1Parser.And_exprContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="L1Parser.comp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterComp([NotNull] L1Parser.CompContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="L1Parser.comp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitComp([NotNull] L1Parser.CompContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.arith_expr"/>.
 	/// </summary>

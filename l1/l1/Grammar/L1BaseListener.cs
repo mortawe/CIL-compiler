@@ -204,18 +204,6 @@ public partial class L1BaseListener : IL1Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitStmt([NotNull] L1Parser.StmtContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="L1Parser.cond"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterCond([NotNull] L1Parser.CondContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="L1Parser.cond"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitCond([NotNull] L1Parser.CondContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.expr"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -228,18 +216,6 @@ public partial class L1BaseListener : IL1Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitExpr([NotNull] L1Parser.ExprContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="L1Parser.xor_expr"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterXor_expr([NotNull] L1Parser.Xor_exprContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="L1Parser.xor_expr"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitXor_expr([NotNull] L1Parser.Xor_exprContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.and_expr"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -251,6 +227,18 @@ public partial class L1BaseListener : IL1Listener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitAnd_expr([NotNull] L1Parser.And_exprContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="L1Parser.comp"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterComp([NotNull] L1Parser.CompContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="L1Parser.comp"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitComp([NotNull] L1Parser.CompContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.arith_expr"/>.
 	/// <para>The default implementation does nothing.</para>
