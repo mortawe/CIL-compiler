@@ -1,11 +1,20 @@
 define void Main(int A, int B) 
- int m1 := 1;
+ string s := "hello";
+ s := "mem";
+ bool b := T and F;
+ int m1 := 12*1;
+ m1 := 2000;
+ b := F xor F;
  assert m1 = 1;
  return;
 end;
 
-define int Test(int A, int B) 
- int m2 := 1;
+define  void TestMul(int A, int B) 
+ int m2 := 11*2 + 8;
+ int m3 := 11/2 + 2/3;
+ int m3 := 11 mod 3 + 3;
+ bool l := 10 > 29;
  assert m2 = 2;
- return m2;
+
+ return ;
 end;
