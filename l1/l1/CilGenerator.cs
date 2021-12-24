@@ -364,13 +364,12 @@ namespace l1
             if (ctx.IDENT() != null) return LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + ctx.IDENT().GetText());
             if (ctx.array_elem() != null)
             {
-                var arr =  LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + ctx.array_elem().IDENT().GetText());
-                var getMethod = typeof(int[]).GetMethod("Get", new[] { typeof(int)});
+                var arr = LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + ctx.array_elem().IDENT().GetText());
                 var id = EmitExpr(ctx.array_elem().expr(0));
                 arr.Load();
-                il.Emit(OpCodes.Call, getMethod);
                 id.Load();
-                // return LocalObjectDef.AllocateLocal(arr.ElemType);
+                il.Emit(OpCodes.Ldelem_I4);
+                return LocalObjectDef.AllocateLocal(typeof(int));
             }
 
             if (ctx.NEW() != null) return EmitNewArray(ctx);

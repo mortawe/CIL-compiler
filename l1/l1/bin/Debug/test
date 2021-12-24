@@ -7,6 +7,7 @@ define  char array TestMul(int A, int B)
  m00 := 10 * 10;
  int array b;
  b := new int[10];
+ m00 := b[0];
  bool array hui := new bool[m00];
  int m2 := 11*2 + m00;
  int m3 := 11/2 + 2/3;

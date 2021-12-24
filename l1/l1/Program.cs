@@ -9,9 +9,9 @@ namespace l1
     {
         private static void Main(string[] args)
         {
+            var i = 4;
             int[] str = {10,10,10,123213,1};
-            str[4] = 12020;
-            Console.Write(str);
+            Console.Write(str[i]);
 
             try
             {
