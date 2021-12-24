@@ -25,7 +25,7 @@ term: factor (MULT factor)* ;
 factor: (power | '-' factor );
 power: atom_expr ('**' factor)*;
 atom_expr : ( IDENT | array_elem |
- NEW type '['expr']' | IDENT | NUMBER  | BOOLEAN | CHAR | STRING) ;    
+ NEW type '['expr']' | IDENT | NUMBER  | BOOLEAN | CHAR | STRING | op_func_call) ;    
 array_elem: (IDENT ('[' expr ']')+);
 NUMBER : (DIGITS)+;
 CHAR: '\'' (LOWERCASE|UPPERCASE|DIGITS|' ') '\'';

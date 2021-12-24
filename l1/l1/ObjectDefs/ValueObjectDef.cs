@@ -8,16 +8,31 @@ namespace l1.ObjectDefs
     {
         private readonly ConstructorBuilder Builder;
         private readonly object Value;
+        public Type ElemType;
 
-        public ValueObjectDef(Type type, object value = null, ConstructorBuilder builder = null)
+        public ValueObjectDef(Type type,  Type elemType): base(type)
+        {
+                ElemType = elemType;
+                Type = type;
+                IsUsed = true;
+        }
+        
+        public ValueObjectDef(Type type, object value = null, Type elemType = null)
             : base(type)
         {
+            if (type.IsArray)
+            {
+                ElemType = type.GetElementType();
+                Type = type;
+                IsUsed = true;
+                return;
+            }
             Value = value;
             if (value == null)
             {
                 if (type == typeof(int))
                 {
-                    Value = 1;
+                    Value = 0;
                 }
                 else if (type == typeof(bool))
                 {
@@ -36,20 +51,17 @@ namespace l1.ObjectDefs
                     Value = null;
                 }
             }
-        
-
-            Builder = builder;
         }
 
         public override enmObjectScope Scope => enmObjectScope.Value;
 
         public override void Load()
         {
-            if (Type == typeof(int))
+            if (Type == typeof(int) || Type == typeof(Int32))
             {
                 EmitInteger((int) Value);
             }
-            else if (Type == typeof(bool))
+            else if (Type == typeof(bool) || Type == typeof(Boolean))
             {
                 var boolean = (bool) Value;
                 if (boolean)
@@ -65,13 +77,9 @@ namespace l1.ObjectDefs
             {
                 Generator_.Emit(OpCodes.Ldstr, (string) Value);
             }
-            else if (Builder == null)
+            else if (Type.IsArray)
             {
-                Generator_.Emit(OpCodes.Ldnull);
-            }
-            else
-            {
-                Generator_.Emit(OpCodes.Newobj, Builder);
+                Generator_.Emit(OpCodes.Newarr, ElemType);
             }
         }
 

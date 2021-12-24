@@ -12,18 +12,37 @@ namespace l1.ObjectDefs
         public string Name;
 
         public int Number;
+        public Type ElemType;
 
-        protected LocalObjectDef(Type type, int number, string name = "")
+        protected LocalObjectDef(Type type, int number, string name = "", Type elemType = null)
             : base(type)
         {
+            ElemType = elemType;
             Name = name;
             Number = number;
         }
 
         public override enmObjectScope Scope => enmObjectScope.Local;
 
-        public static LocalObjectDef AllocateLocal(Type type, string name = "")
+        public static LocalObjectDef AllocateFromObjectDef(ObjectDef obj, string name = "")
         {
+            if (obj is ValueObjectDef)
+            {
+                var arr = (ValueObjectDef) obj;
+                return AllocateLocal(arr.Type, name, arr.ElemType);
+            }
+
+            if (obj is LocalObjectDef)
+            {
+                var l = (LocalObjectDef) obj;
+                return AllocateLocal(l.Type, name, l.ElemType);
+            }
+
+            return AllocateLocal(obj.Type, name);
+        }
+        public static LocalObjectDef AllocateLocal(Type type, string name = "", Type ElemType = null)
+        {
+            
             var duplicatedLocals = new List<LocalObjectDef>();
             var number = 0;
             int i;
@@ -38,7 +57,7 @@ namespace l1.ObjectDefs
                 if (Locals_[i].Type.Name == type.Name && !Locals_[i].IsUsed)
                 {
                     number = i;
-                    Locals_[i] = new LocalObjectDef(type, number, name);
+                    Locals_[i] = new LocalObjectDef(type, number, name, ElemType);
                     break;
                 }
 
@@ -46,7 +65,7 @@ namespace l1.ObjectDefs
             {
                 var localVar = Generator_.DeclareLocal(type);
                 number = localVar.LocalIndex;
-                Locals_.Add(new LocalObjectDef(type, number, name));
+                Locals_.Add(new LocalObjectDef(type, number, name, ElemType));
             }
 
             EmitSaveToLocal(number);

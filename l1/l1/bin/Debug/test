@@ -1,34 +1,23 @@
-define  char array TestMul(int A, int B) 
- char array cc1 := "Hui";
- char array array ccc2 := new char array[100];
- int m00;
- cc1 := "hui";
- cc1 := "hello world";
- m00 := 10 * 10;
- int array b;
- b := new int[10];
- m00 := b[0];
- bool array hui := new bool[m00];
- int m2 := 11*2 + m00;
- int m3 := 11/2 + 2/3;
- int m3 := 11 mod 3 + 3;
- bool l := 10 > 29;
- assert m2 = 2;
- int a:= 10 ** 2 ;
-
- return cc1;
+define  int array TestMul(int A, int B) 
+ int b := 10010;
+ int a := Test(10);
+ int c := A * B;
+ int array huita := new int[10];
+ return huita;
 end
 
+define int Test(int a)
+ int b := a;
+ return b;
+end
 
-
-define Main(int A, int B)
- char a := 'a'; 
- a := 'l';
- bool b := T and F;
- int m1 := 12*1;
- m1 := 2000;
- b := F xor F;
- assert m1 = 1;
- return;
+define Main()
+ int b := 10;
+ b := Test(100);
+ int array h := new int[1];
+ h := TestMul(1,2);
+ h[0] := 1;
+ b := h[0] * 100;
+ return ;
 end
 
