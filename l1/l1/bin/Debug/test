@@ -1,7 +1,13 @@
-define  int TestMul(int A, int B) 
+define  char array TestMul(int A, int B) 
+ char array cc1 := "Hui";
+ char array array ccc2 := new char array[100];
  int m00;
+ cc1 := "hui";
+ cc1 := "hello world";
  m00 := 10 * 10;
- return m00;
+ int array b;
+ b := new int[10];
+ bool array hui := new bool[m00];
  int m2 := 11*2 + m00;
  int m3 := 11/2 + 2/3;
  int m3 := 11 mod 3 + 3;
@@ -9,14 +15,14 @@ define  int TestMul(int A, int B)
  assert m2 = 2;
  int a:= 10 ** 2 ;
 
- return m00;
+ return cc1;
 end
 
 
 
-define Main(int A, int B) 
- string s := "hello";
- s := "mem";
+define Main(int A, int B)
+ char a := 'a'; 
+ a := 'l';
  bool b := T and F;
  int m1 := 12*1;
  m1 := 2000;
