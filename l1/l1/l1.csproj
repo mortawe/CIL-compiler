@@ -43,33 +43,31 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Gen\SpeakBaseListener.cs" />
-        <Compile Include="Gen\SpeakBaseVisitor.cs" />
-        <Compile Include="Gen\SpeakLexer.cs" />
-        <Compile Include="Gen\SpeakListener.cs" />
-        <Compile Include="Gen\SpeakParser.cs" />
-        <Compile Include="Gen\SpeakVisitor.cs" />
+        <Compile Include="CilGenerator.cs" />
         <Compile Include="Grammar\L1BaseListener.cs" />
         <Compile Include="Grammar\L1Lexer.cs" />
         <Compile Include="Grammar\L1Listener.cs" />
         <Compile Include="Grammar\L1Parser.cs" />
+        <Compile Include="L1Tokens.cs" />
+        <Compile Include="ObjectDefs\ArgObjectDef.cs" />
         <Compile Include="ObjectDefs\ArrayObjDef.cs" />
         <Compile Include="ObjectDefs\enumObjectScope.cs" />
         <Compile Include="ObjectDefs\LocalObjectDef.cs" />
+        <Compile Include="ObjectDefs\MethodDef.cs" />
         <Compile Include="ObjectDefs\ObjectDef.cs" />
+        <Compile Include="ObjectDefs\ValueObjectDef.cs" />
+        <Compile Include="ObjectDefs\VarDef.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="SpeakVisitor.cs" />
+        <Compile Include="Token.cs" />
     </ItemGroup>
     <ItemGroup>
         <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="Gen\Speak.g4" />
-        <Content Include="Gen\Speak.interp" />
-        <Content Include="Gen\Speak.tokens" />
-        <Content Include="Gen\SpeakLexer.interp" />
-        <Content Include="Gen\SpeakLexer.tokens" />
+        <Content Include="bin\Debug\compiled.exe" />
+        <Content Include="bin\Debug\test" />
+        <Content Include="Grammar\L1.g4" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

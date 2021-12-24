@@ -108,6 +108,18 @@ public partial class L1BaseListener : IL1Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitFact_params([NotNull] L1Parser.Fact_paramsContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="L1Parser.op_return"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterOp_return([NotNull] L1Parser.Op_returnContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="L1Parser.op_return"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitOp_return([NotNull] L1Parser.Op_returnContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.op_definition"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -299,6 +311,18 @@ public partial class L1BaseListener : IL1Listener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitAtom_expr([NotNull] L1Parser.Atom_exprContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="L1Parser.array_elem"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterArray_elem([NotNull] L1Parser.Array_elemContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="L1Parser.array_elem"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitArray_elem([NotNull] L1Parser.Array_elemContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

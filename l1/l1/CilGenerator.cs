@@ -95,15 +95,6 @@ namespace l1
                 var expr = ctx.op_definition().expr();
                 var id = CurrentFun_.Name +
                          ctx.op_definition().IDENT().GetText();
-                if (ctx.op_definition().type().ARRAY().Length > 0)
-                {
-                    var arr = new ArrayObjDef(GetType(ctx.op_definition().type()),
-                        GetBaseType(ctx.op_definition().type()));
-                    arr.Load();
-                    return LocalObjectDef.AllocateLocal(GetType(ctx.op_definition().type()),
-                         ctx.op_definition().IDENT().GetText() ,GetBaseType(ctx.op_definition().type()));
-                }
-
                 if (expr != null)
                 {
                     var returnObjDef = EmitExpr(expr);
@@ -114,7 +105,7 @@ namespace l1
                 {
                     var returnObjDef = new ValueObjectDef(GetType(ctx.op_definition().type()));
                     returnObjDef.Load();
-                    LocalObjectDef.AllocateLocal(returnObjDef.Type, id);
+                    var result = LocalObjectDef.AllocateLocal(returnObjDef.Type, id);
                 }
             }
 
@@ -123,12 +114,6 @@ namespace l1
                 var returnObjDef = EmitExpr(ctx.op_assign().expr());
                 var id = CurrentFun_.Name + ctx.op_assign().IDENT().GetText();
                 returnObjDef.Load();
-                if (returnObjDef is ArrayObjDef)
-                { 
-                    var casted = (ArrayObjDef) returnObjDef;
-                   return  LocalObjectDef.AllocateLocal(returnObjDef.Type, id, casted.ElemType);
-
-                }
                 LocalObjectDef.AllocateLocal(returnObjDef.Type, id);
             }
 
@@ -383,10 +368,9 @@ namespace l1
                 var getMethod = typeof(int[]).GetMethod("Get", new[] { typeof(int)});
                 var id = EmitExpr(ctx.array_elem().expr(0));
                 arr.Load();
-                il.Emit(OpCodes.Ldelem);
+                il.Emit(OpCodes.Call, getMethod);
                 id.Load();
-                // il.Emit(OpCodes.Call, getMethod);
-                return LocalObjectDef.AllocateLocal(arr.ElemType);
+                // return LocalObjectDef.AllocateLocal(arr.ElemType);
             }
 
             if (ctx.NEW() != null) return EmitNewArray(ctx);
@@ -419,22 +403,6 @@ namespace l1
             var b = new bool[] { };
             return new ArrayObjDef(b.GetType(), typeof(bool));
         }
-
-        protected Type GetBaseType(L1Parser.TypeContext type)
-        {
-            switch (type.BASE_TYPE().GetText())
-            {
-                case "int":
-                    return typeof(int);
-                case "bool":
-                    return  typeof(bool);
-                case "char":
-                    return typeof(char);
-            }
-
-            return null;
-        }
-
 
         protected Type GetType(L1Parser.TypeContext type)
         {

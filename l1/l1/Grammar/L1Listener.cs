@@ -91,6 +91,16 @@ public interface IL1Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitFact_params([NotNull] L1Parser.Fact_paramsContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="L1Parser.op_return"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterOp_return([NotNull] L1Parser.Op_returnContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="L1Parser.op_return"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitOp_return([NotNull] L1Parser.Op_returnContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.op_definition"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -250,4 +260,14 @@ public interface IL1Listener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitAtom_expr([NotNull] L1Parser.Atom_exprContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="L1Parser.array_elem"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArray_elem([NotNull] L1Parser.Array_elemContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="L1Parser.array_elem"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArray_elem([NotNull] L1Parser.Array_elemContext context);
 }
