@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Text;
+using System.IO;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 
 namespace l1
 {
@@ -8,29 +9,26 @@ namespace l1
     {
         private static void Main(string[] args)
         {
+            int[] str = {10,10,10,123213,1};
+            str[4] = 12020;
+            Console.Write(str);
+
             try
             {
-                var input = "";
-                var text = new StringBuilder();
-                Console.WriteLine("Input the chat.");
-
-                // to type the EOF character and end the input: use CTRL+D, then press <enter>
-                while ((input = Console.ReadLine()) != null) text.AppendLine(input);
-
-                var inputStream = new AntlrInputStream(text.ToString());
-                var speakLexer = new SpeakLexer(inputStream);
-                var commonTokenStream = new CommonTokenStream(speakLexer);
-
-                var speakParser = new SpeakParser(commonTokenStream);
-                var chatContext = speakParser.chat();
-                var visitor = new SpeakVisitor();
-                visitor.Visit(chatContext);
-                var tokens = commonTokenStream.GetTokens();
-                foreach (var t in tokens)
-                {
-                    Console.WriteLine("{0} type, {1} text" , t.Type, t.Text);
-                }
-                foreach (var line in visitor.Lines) Console.WriteLine("{0} has said {1}", line.Person, line.Text);
+                var input = File.ReadAllText("test");
+                Console.WriteLine(input);
+                var stream = CharStreams.fromString(input);
+                var lexer = new L1Lexer(stream);
+                ITokenStream tokens = new CommonTokenStream(lexer);
+                var parser = new L1Parser(tokens);
+                parser.BuildParseTree = true;
+                IParseTree tree = parser.program();
+                // Console.Write(tree.ToStringTree());
+                var path = "compiled.exe";
+                // var moduleName = Path.GetFileNameWithoutExtension(path) + ".exe";
+                var moduleName = path;
+                var cilGen = new CilGenerator(tree, moduleName);
+                cilGen.Generate();
             }
             catch (Exception ex)
             {
