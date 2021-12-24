@@ -1,4 +1,20 @@
-define void Main(int A, int B) 
+define  int TestMul(int A, int B) 
+ int m00;
+ m00 := 10 * 10;
+ return m00;
+ int m2 := 11*2 + m00;
+ int m3 := 11/2 + 2/3;
+ int m3 := 11 mod 3 + 3;
+ bool l := 10 > 29;
+ assert m2 = 2;
+ int a:= 10 ** 2 ;
+
+ return m00;
+end
+
+
+
+define Main(int A, int B) 
  string s := "hello";
  s := "mem";
  bool b := T and F;
@@ -7,14 +23,5 @@ define void Main(int A, int B)
  b := F xor F;
  assert m1 = 1;
  return;
-end;
+end
 
-define  void TestMul(int A, int B) 
- int m2 := 11*2 + 8;
- int m3 := 11/2 + 2/3;
- int m3 := 11 mod 3 + 3;
- bool l := 10 > 29;
- assert m2 = 2;
-
- return ;
-end;
