@@ -1,11 +1,11 @@
 define  int array TestMul(int A, int B) 
  int b := 10010;
  int array ret :=  new int[10];
- if b > 111111 then
+ if A > B then 
     return ret;
  end;
  int a := Test(10);
- int c := A * B * b;
+ int c := A * B * b*a;
  int array huita := new int[10];
  huita[0] := 99;
  return huita;
@@ -17,9 +17,9 @@ define int Test(int a)
 end
 
 define Main()
- int h := TestMul(1,2);
+ int array h := TestMul(1,2);
  int b;
- assert 5 < 4;
+ assert 5 > 4;
  if 5 < h[0] xor T then 
     b := 2;
  elseif h[0] >= 2 and F  or T then
@@ -30,5 +30,6 @@ define Main()
  while b < 100 do
     b := b + 1;
  end;
+
 end
 

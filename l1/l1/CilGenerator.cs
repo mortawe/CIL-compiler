@@ -61,7 +61,7 @@ namespace l1
                 {
                     methodBuilder = TypeBuilder_.DefineMethod(function.IDENT().GetText(),
                         MethodAttributes.Static | MethodAttributes.Public,
-                        typeof(void), new[] {typeof(char[])});
+                        typeof(void), new[] {typeof(string[])});
                     EntryPoint_ = methodBuilder;
                 }
                 else
@@ -72,7 +72,7 @@ namespace l1
                 }
 
                 Functions_.Add(function.IDENT().GetText(),
-                    new MethodDef(function.IDENT().GetText(), args, methodBuilder));
+                    new MethodDef(function.IDENT().GetText(), args, methodBuilder, methodBuilder.GetILGenerator().DefineLabel()));
             }
         }
 
@@ -144,9 +144,20 @@ namespace l1
             var il = CurrentFun_.MethodBuilder.GetILGenerator();
             if (context.type() == null || GetType(context.type()) == typeof(void))
             {
-                il.Emit(OpCodes.Pop);
-                il.Emit(OpCodes.Ret);
+                // il.Emit(OpCodes.Br, CurrentFun_.RetLabel);
             }
+            il.MarkLabel(CurrentFun_.RetLabel);
+            if (context.type() != null)
+            {
+                il.Emit(OpCodes.Pop);
+
+                LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + "ret").Load();
+            // LocalObjectDef.AllocateLocal(CurrentFun_.MethodBuilder.ReturnType).Load();
+
+            }
+            else 
+                il.Emit(OpCodes.Pop);
+            il.Emit(OpCodes.Ret);
             CurrentFun_ = null;
             // base.ExitFunction(context);
         }
@@ -200,9 +211,10 @@ namespace l1
             {
                 var returnObjDef = EmitExpr(expr);
                 returnObjDef.Load();
+                LocalObjectDef.AllocateFromObjectDef(returnObjDef, CurrentFun_.Name + "ret");
             }
-
-            il.Emit(OpCodes.Ret);
+            il.Emit(OpCodes.Br, CurrentFun_.RetLabel);
+            // il.Emit(OpCodes.Ret);
         }
 
         public  void EmitOp_while_pre(L1Parser.Op_while_preContext ctx)
