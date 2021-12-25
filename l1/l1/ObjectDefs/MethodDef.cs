@@ -8,6 +8,7 @@ namespace l1.ObjectDefs
         public Dictionary<string, ArgObjectDef> Args;
         public MethodBuilder MethodBuilder;
         public string Name;
+        public Label EndLabel;
 
         public MethodDef(string name, Dictionary<string, ArgObjectDef> args, MethodBuilder methodBuilder)
         {
