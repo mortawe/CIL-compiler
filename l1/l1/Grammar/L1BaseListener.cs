@@ -288,18 +288,6 @@ public partial class L1BaseListener : IL1Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitTerm([NotNull] L1Parser.TermContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="L1Parser.factor"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterFactor([NotNull] L1Parser.FactorContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="L1Parser.factor"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitFactor([NotNull] L1Parser.FactorContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.power"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

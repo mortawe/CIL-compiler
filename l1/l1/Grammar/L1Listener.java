@@ -117,6 +117,16 @@ public interface L1Listener extends ParseTreeListener {
 	 */
 	void exitOp_if(L1Parser.Op_ifContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link L1Parser#op_for}.
+	 * @param ctx the parse tree
+	 */
+	void enterOp_for(L1Parser.Op_forContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link L1Parser#op_for}.
+	 * @param ctx the parse tree
+	 */
+	void exitOp_for(L1Parser.Op_forContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link L1Parser#op_while_pre}.
 	 * @param ctx the parse tree
 	 */
@@ -206,16 +216,6 @@ public interface L1Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTerm(L1Parser.TermContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link L1Parser#factor}.
-	 * @param ctx the parse tree
-	 */
-	void enterFactor(L1Parser.FactorContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link L1Parser#factor}.
-	 * @param ctx the parse tree
-	 */
-	void exitFactor(L1Parser.FactorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link L1Parser#power}.
 	 * @param ctx the parse tree

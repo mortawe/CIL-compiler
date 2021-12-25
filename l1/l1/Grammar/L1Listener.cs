@@ -241,16 +241,6 @@ public interface IL1Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitTerm([NotNull] L1Parser.TermContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="L1Parser.factor"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterFactor([NotNull] L1Parser.FactorContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="L1Parser.factor"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitFactor([NotNull] L1Parser.FactorContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.power"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

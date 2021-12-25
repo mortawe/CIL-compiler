@@ -26,14 +26,49 @@ namespace l1
         {
             DefineFunctions();
             ParseTreeWalker.Default.Walk(this, Tree_);
-            Console.Write(EntryPoint_);
             TypeBuilder_.CreateType(); // finish type
             AssemblyBuilder_.SetEntryPoint(EntryPoint_);
             AssemblyBuilder_.Save(ProgramName_ + ".exe");
         }
 
+        private void DefineIO()
+        {
+            var WriteStringLineMethod = typeof(Console).GetMethod("WriteLine", BindingFlags.Public | BindingFlags.Static, null,
+                new Type[] { typeof(string) }, null);
+            var WriteIntLineMethod = typeof(Console).GetMethod("WriteLine", BindingFlags.Public | BindingFlags.Static, null,
+                new Type[] { typeof(int)}, null);
+            var outStringLineBuilder = TypeBuilder_.DefineMethod("PrintString", MethodAttributes.Public, CallingConventions.Standard,
+                TypeBuilder_, new Type[] { typeof(string) });
+            var il = outStringLineBuilder.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Call, WriteStringLineMethod);
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ret);
+            Functions_.Add("PrintString", new MethodDef("PrintString",
+                new Dictionary<string, ArgObjectDef>() 
+                {
+                    { "this", new ArgObjectDef(TypeBuilder_, 0, "this") }, 
+                    { "x", new ArgObjectDef(typeof(string), 1, "x") }
+                }, outStringLineBuilder, new Label()));
+
+            var outIntLineBuilder = TypeBuilder_.DefineMethod("PrintInt", MethodAttributes.Public, CallingConventions.Standard,
+                TypeBuilder_, new Type[] { typeof(int) });
+            il = outIntLineBuilder.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Call, WriteIntLineMethod);
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ret);
+            Functions_.Add("PrintInt", new MethodDef("PrintInt",
+                new Dictionary<string, ArgObjectDef>() 
+                {
+                    { "this", new ArgObjectDef(TypeBuilder_, 0, "this") }, 
+                    { "x", new ArgObjectDef(typeof(int), 1, "x") }
+                }, outIntLineBuilder, new Label()));
+
+        }
         private void DefineFunctions()
         {
+            DefineIO();
             var programCtx = (L1Parser.ProgramContext) Tree_;
             foreach (var function in programCtx.function())
             {
@@ -97,8 +132,7 @@ namespace l1
                     result = typeof(char);
                     if (type.ARRAY().Length == 0) return result;
                     if (type.ARRAY().Length == 1) return typeof(string);
-                    var arrC = new string[] { };
-                    return arrC.GetType();
+                    return typeof(string[]);
             }
             return null;
         }
@@ -233,7 +267,6 @@ namespace l1
 
         private void EmitFunction_body(L1Parser.Function_bodyContext context)
         {
-            Console.Write("Hello");
             foreach (var stmt in context.stmt()) EmitStmt(stmt);
         }
 
@@ -251,8 +284,70 @@ namespace l1
                 EmitOp_while_pre(context.op_while_pre());
             if (context.op_assert() != null)
                 EmitOp_assert(context.op_assert());
+            if (context.op_for() != null)
+                EmitOp_for(context.op_for());
+            if (context.op_while_post() != null) 
+                EmitOp_while_post(context.op_while_post());
+            if (context.op_func_call() != null)
+                EmitFuncCall(context.op_func_call());
+
         }
 
+        private void EmitOp_while_post(L1Parser.Op_while_postContext ctx)
+        {
+            var il = CurrentFun_.MethodBuilder.GetILGenerator();
+            var emitL = il.DefineLabel();
+            var exitL = il.DefineLabel();
+            il.MarkLabel(emitL);
+            EmitFunction_body(ctx.function_body());
+            var expr = EmitExpr(ctx.expr());
+            expr.Load();
+            il.Emit(OpCodes.Brfalse, exitL);
+            il.Emit(OpCodes.Br, emitL);
+            il.MarkLabel(exitL);
+        }
+        private void EmitOp_for(L1Parser.Op_forContext ctx)
+        {
+            string iterName = "";
+
+            var il = CurrentFun_.MethodBuilder.GetILGenerator();
+            if (ctx.op_definition() != null)
+            {
+                iterName = ctx.op_definition().IDENT().GetText();
+                EmitOp_definition(ctx.op_definition());
+            }
+
+            if (ctx.op_assign() != null)
+            {
+                iterName = ctx.op_assign().IDENT().GetText();
+                EmitOp_assign(ctx.op_assign());
+            }
+            var to = EmitExpr(ctx.expr(0));
+            ObjectDef step;
+            if (ctx.expr().Length > 1)
+            {
+                step = EmitExpr(ctx.expr(1));
+            }
+            else
+            {
+                step = new ValueObjectDef(typeof(int), 1);
+            }
+            Label checkL = il.DefineLabel();
+            Label exitL = il.DefineLabel();
+            il.MarkLabel(checkL);
+            var iterVar = LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + iterName);
+            iterVar.Load();
+            to.Load();
+            il.Emit(OpCodes.Clt);
+            il.Emit(OpCodes.Brfalse, exitL);
+            EmitFunction_body((ctx.function_body()));
+            iterVar.Load();
+            step.Load();
+            il.Emit(OpCodes.Add);
+            LocalObjectDef.AllocateLocal(typeof(int), CurrentFun_.Name + iterName);
+            il.Emit(OpCodes.Br, checkL);
+            il.MarkLabel(exitL);
+        }
         public  void EmitOp_if(L1Parser.Op_ifContext ctx)
         {
             var exitLs = new List<Label>();
@@ -311,9 +406,9 @@ namespace l1
         {
             var il = CurrentFun_.MethodBuilder.GetILGenerator();
             var prevFactor = EmitAtom(p.atom_expr());
-            for (var i = 0; i < p.factor().Length; i++)
+            for (var i = 0; i < p.power().Length; i++)
             {
-                var factor = EmitFactor(p.factor(i));
+                var factor = EmitPower(p.power(i));
                 prevFactor.Load();
                 factor.Load();
                 var method = typeof(Math).GetMethod("Pow", BindingFlags.Public | BindingFlags.Static, null,
@@ -325,27 +420,27 @@ namespace l1
             return prevFactor;
         }
 
-        private ObjectDef EmitFactor(L1Parser.FactorContext f)
-        {
-            var il = CurrentFun_.MethodBuilder.GetILGenerator();
-            if (f.factor() != null)
-            {
-                var returnObjDef = EmitFactor(f.factor());
-                returnObjDef.Load();
-                il.Emit(OpCodes.Neg);
-                return LocalObjectDef.AllocateFromObjectDef(returnObjDef);
-            }
+        // private ObjectDef EmitFactor(L1Parser.FactorContext f)
+        // {
+            // var il = CurrentFun_.MethodBuilder.GetILGenerator();
+            // if (f.factor() != null)
+            // {
+                // var returnObjDef = EmitFactor(f.factor());
+                // returnObjDef.Load();
+                // il.Emit(OpCodes.Neg);
+                // return LocalObjectDef.AllocateFromObjectDef(returnObjDef);
+            // }
 
-            return EmitPower(f.power());
-        }
+            // return EmitPower(f.power());
+        // }
 
         private ObjectDef EmitTerm(L1Parser.TermContext t)
         {
             var il = CurrentFun_.MethodBuilder.GetILGenerator();
             ObjectDef prevFactor = null;
-            for (var i = 0; i < t.factor().Length; i++)
+            for (var i = 0; i < t.power().Length; i++)
             {
-                var factor = EmitFactor(t.factor(i));
+                var factor = EmitPower(t.power(i));
                 var op = t.MULT(i - 1);
 
                 if (prevFactor != null)
@@ -555,11 +650,12 @@ namespace l1
             if (ctx.IDENT() != null) return LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + ctx.IDENT().GetText());
             if (ctx.array_elem() != null)
             {
+                Console.WriteLine(CurrentFun_.Name + ctx.array_elem().IDENT().GetText());
                 var arr = LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + ctx.array_elem().IDENT().GetText());
                 var id = EmitExpr(ctx.array_elem().expr(0));
                 arr.Load();
                 id.Load();
-                il.Emit(OpCodes.Ldelem_I4);
+                il.Emit(OpCodes.Ldelem, arr.ElemType);
                 return LocalObjectDef.AllocateLocal(arr.ElemType);
             }
 
@@ -570,18 +666,15 @@ namespace l1
 
         private ObjectDef EmitNewArray(L1Parser.Atom_exprContext atom)
         {
-            Console.WriteLine(GetType(atom.type()));
             var dim = EmitExpr(atom.expr());
             dim.Load();
-            if (GetType(atom.type()) == typeof(char) || GetType(atom.type()) == typeof(string))
+            if (GetType(atom.type()) == typeof(string[]) || GetType(atom.type()) == typeof(string) )
             {
-                if (atom.type().ARRAY().Length == 1)
+                if (atom.type().ARRAY().Length > 1)
                 {
-                    var r = new string[] { };
-                    return new ValueObjectDef(r.GetType(), typeof(string));
+                    return new ValueObjectDef(typeof(string[]) ,typeof(string));
                 }
-
-                return new ValueObjectDef(typeof(string));
+                return new ValueObjectDef(typeof(string), typeof(char));
             }
 
             if (GetType(atom.type()) == typeof(int))

@@ -42,7 +42,10 @@ namespace l1.ObjectDefs
         }
         public static LocalObjectDef AllocateLocal(Type type, string name = "", Type ElemType = null)
         {
-            
+            if (type.IsArray)
+            {
+                ElemType = type.GetElementType();
+            }
             var duplicatedLocals = new List<LocalObjectDef>();
             var number = 0;
             int i;

@@ -7,21 +7,9 @@ namespace l1
 {
     internal class Program
     {
-        public static int f()
-        {
-            var i = 4;
-            i = 923;
-            if (i > 0)
-            {
-                return 0;
-            } 
-            
-            Console.Write(i >= 5);
-            return 1;
-        }
+        
         private static void Main(string[] args)
         {
-            f();
             try
             {
                 var input = File.ReadAllText("test");

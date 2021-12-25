@@ -1,35 +1,41 @@
-define  int array TestMul(int A, int B) 
- int b := 10010;
- int array ret :=  new int[10];
- if A > B then 
-    return ret;
- end;
- int a := Test(10);
- int c := A * B * b*a;
- int array huita := new int[10];
- huita[0] := 99;
- return huita;
+
+define int array Swap(int array a, int n, int j, int i)
+   assert i < n and j < n;
+   int temp := a[i];
+   a[i] := a[j];
+   a[j] := temp;
+   return a;
 end
 
-define int Test(int a)
- int b := a;
- return b;
-end
+*** Hidden input
+define int array BubbleSort(int array a, int n)
+    int j := 0 to n - 1 step 1 do
+        int i := 0 to n - 1 - j step 1 do
+            if a[i] > a[i+1] then
+                a := Swap(a, n, i, i+1);
+            end;
+        end;
+    end;
+    return a;
+end 
 
 define Main()
- int array h := TestMul(1,2);
- int b;
- assert 5 > 4;
- if 5 < h[0] xor T then 
-    b := 2;
- elseif h[0] >= 2 and F  or T then
-    b := 3;
- else
-    b := 6;
+ int n := 10;
+ PrintString("BEFORE:");
+ int array a := new int[n];
+ int i := 0 to n do
+    a[i] := n - i;
+    PrintInt(a[i]);
  end;
- while b < 100 do
-    b := b + 1;
+ a := BubbleSort(a, n);
+ PrintString("AFTER:");
+ i := 0 to n do
+    PrintInt(a[i]);
  end;
-
+ char array array s := new char array array[10];
+ s[0] := "one";
+ s[1]:= "two";
+ char array h := "hello";
+ PrintString(h);
 end
 
