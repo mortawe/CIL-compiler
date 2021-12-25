@@ -10,8 +10,8 @@ namespace l1
         private static void Main(string[] args)
         {
             var i = 4;
-            int[] str = {10,10,10,123213,1};
-            Console.Write(str[i]);
+            i = 923;
+            Console.Write(i >= 5);
 
             try
             {

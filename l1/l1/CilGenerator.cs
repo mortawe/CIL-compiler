@@ -47,7 +47,7 @@ namespace l1
                     {
                         inputTypes[i] = GetType(function.var_list().type(i));
                         var argName = function.var_list().IDENT(i).GetText();
-                        args.Add(argName, new ArgObjectDef(inputTypes[i], i+1, argName));
+                        args.Add(argName, new ArgObjectDef(inputTypes[i], i + 1, argName));
                     }
                 }
                 else
@@ -56,20 +56,21 @@ namespace l1
                 }
 
                 MethodBuilder methodBuilder;
-                
+
                 if (function.IDENT().GetText() == "Main")
                 {
                     methodBuilder = TypeBuilder_.DefineMethod(function.IDENT().GetText(),
-                        MethodAttributes.Static |MethodAttributes.Public ,
-                        typeof(void), (new []{typeof(char[])}));
+                        MethodAttributes.Static | MethodAttributes.Public,
+                        typeof(void), new[] {typeof(char[])});
                     EntryPoint_ = methodBuilder;
                 }
                 else
                 {
-                    methodBuilder = TypeBuilder_.DefineMethod(function.IDENT().GetText(),   
-                         MethodAttributes.Public ,
+                    methodBuilder = TypeBuilder_.DefineMethod(function.IDENT().GetText(),
+                        MethodAttributes.Public,
                         GetType(function.type()), inputTypes);
                 }
+
                 Functions_.Add(function.IDENT().GetText(),
                     new MethodDef(function.IDENT().GetText(), args, methodBuilder));
             }
@@ -82,13 +83,14 @@ namespace l1
             LocalObjectDef.InitGenerator(CurrentFun_.MethodBuilder.GetILGenerator());
             var il = CurrentFun_.MethodBuilder.GetILGenerator();
             il.Emit(OpCodes.Ldarg, 0);
-            for (var i = 1; i < context.var_list().type().Length+1; i++ )
+            for (var i = 1; i < context.var_list().type().Length + 1; i++)
             {
                 il.Emit(OpCodes.Ldarg, i);
-                var type = context.var_list().type(i-1);
-                var id = context.var_list().IDENT(i-1);
-                LocalObjectDef.AllocateLocal(GetType(type), CurrentFun_.Name+id.GetText());
+                var type = context.var_list().type(i - 1);
+                var id = context.var_list().IDENT(i - 1);
+                LocalObjectDef.AllocateLocal(GetType(type), CurrentFun_.Name + id.GetText());
             }
+
             base.EnterFunction(context);
         }
 
@@ -100,8 +102,11 @@ namespace l1
 
         public override void EnterFunction_body(L1Parser.Function_bodyContext context)
         {
-            foreach (var stmt in context.stmt()) EmitStmt(stmt);
-            return;
+            foreach (var stmt in context.stmt())
+            {
+                var res = EmitStmt(stmt);
+                if (res != null) res.Load();
+            }
         }
 
         private ObjectDef EmitStmt(L1Parser.StmtContext ctx)
@@ -110,19 +115,19 @@ namespace l1
             if (ctx.op_definition() != null)
             {
                 var expr = ctx.op_definition().expr();
-                var id = 
-                         ctx.op_definition().IDENT().GetText();
+                var id =
+                    ctx.op_definition().IDENT().GetText();
                 if (expr != null)
                 {
                     var returnObjDef = EmitExpr(expr);
                     returnObjDef.Load();
-                    LocalObjectDef.AllocateFromObjectDef(returnObjDef, CurrentFun_.Name+ id);
+                    return LocalObjectDef.AllocateFromObjectDef(returnObjDef, CurrentFun_.Name + id);
                 }
                 else
                 {
                     ObjectDef returnObjDef = new ValueObjectDef(GetType(ctx.op_definition().type()));
                     returnObjDef.Load();
-                    LocalObjectDef.AllocateFromObjectDef(returnObjDef,CurrentFun_.Name +  id);
+                    return LocalObjectDef.AllocateFromObjectDef(returnObjDef, CurrentFun_.Name + id);
                 }
             }
 
@@ -131,16 +136,19 @@ namespace l1
                 var returnObjDef = EmitExpr(ctx.op_assign().expr());
                 if (ctx.op_assign().IDENT() != null)
                 {
-                    var id =  ctx.op_assign().IDENT().GetText();
+                    var id = ctx.op_assign().IDENT().GetText();
                     returnObjDef.Load();
-                    return LocalObjectDef.AllocateFromObjectDef(returnObjDef,CurrentFun_.Name +  id);
+                    return LocalObjectDef.AllocateFromObjectDef(returnObjDef, CurrentFun_.Name + id);
                 }
-                var arr = LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + ctx.op_assign().array_elem().IDENT().GetText());
+
+                var arr = LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name +
+                                                           ctx.op_assign().array_elem().IDENT().GetText());
                 var arId = EmitExpr(ctx.op_assign().array_elem().expr(0));
                 arr.Load();
                 arId.Load();
                 returnObjDef.Load();
                 il.Emit(OpCodes.Stelem_I4);
+                return null;
             }
 
             if (ctx.op_return() != null)
@@ -151,17 +159,21 @@ namespace l1
                     var returnObjDef = EmitExpr(expr);
                     returnObjDef.Load();
                 }
+
                 il.Emit(OpCodes.Ret);
             }
 
+            if (ctx.op_if() != null) return EmitIf(ctx.op_if());
+
+            if (ctx.op_while_pre() != null) return EmitWhile(ctx.op_while_pre());
             return null;
         }
 
         private ObjectDef EmitFuncCall(L1Parser.Op_func_callContext ctx)
         {
-            var args = new List<ObjectDef>{};
+            var args = new List<ObjectDef>();
             // var invokeObjectDef = new ArgObjectDef(TypeBuilder_, 0, "this");
-            
+
             for (var i = 0; i < ctx.fact_params().expr().Length; i++)
             {
                 var expr = EmitExpr(ctx.fact_params().expr(i));
@@ -174,26 +186,18 @@ namespace l1
             var mb = callF.MethodBuilder;
             il.Emit(OpCodes.Ldarg_0);
             // invokeObjectDef.Load();
-            foreach (var a in args)
-            {
-                a.Load();
-            }
-            
+            foreach (var a in args) a.Load();
+
             il.Emit(OpCodes.Call, mb);
 
-            foreach (var a in args)
-            {
-                a.Remove();
-            }
+            foreach (var a in args) a.Remove();
             // invokeObjectDef.Remove();
             if (callF.MethodBuilder.ReturnType.IsArray)
-            {
-                return  LocalObjectDef.AllocateLocal(callF.MethodBuilder.ReturnType, 
-                    "",  callF.MethodBuilder.ReturnType.GetElementType());
-            }
-            return  LocalObjectDef.AllocateLocal(callF.MethodBuilder.ReturnType);
-
+                return LocalObjectDef.AllocateLocal(callF.MethodBuilder.ReturnType,
+                    "", callF.MethodBuilder.ReturnType.GetElementType());
+            return LocalObjectDef.AllocateLocal(callF.MethodBuilder.ReturnType);
         }
+
         private ObjectDef EmitPower(L1Parser.PowerContext p)
         {
             var il = CurrentFun_.MethodBuilder.GetILGenerator();
@@ -331,6 +335,23 @@ namespace l1
                         case "<":
                             il.Emit(OpCodes.Clt);
                             break;
+                        case "=":
+                            il.Emit(OpCodes.Ceq);
+                            break;
+                        case "<>":
+                            il.Emit(OpCodes.Ceq);
+                            il.Emit(OpCodes.Neg);
+                            break;
+                        case ">=":
+                            il.Emit(OpCodes.Clt);
+                            il.Emit(OpCodes.Ldc_I4_0);
+                            il.Emit(OpCodes.Ceq);
+                            break;
+                        case "<=":
+                            il.Emit(OpCodes.Cgt);
+                            il.Emit(OpCodes.Ldc_I4_0);
+                            il.Emit(OpCodes.Ceq);
+                            break;
                     }
 
                     prevArith.Remove();
@@ -424,10 +445,10 @@ namespace l1
                 return new ValueObjectDef(typeof(bool), true);
             }
 
-            if (ctx.IDENT() != null) return LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name+ctx.IDENT().GetText());
+            if (ctx.IDENT() != null) return LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + ctx.IDENT().GetText());
             if (ctx.array_elem() != null)
             {
-                var arr =  LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name+ ctx.array_elem().IDENT().GetText());
+                var arr = LocalObjectDef.GetLocalObjectDef(CurrentFun_.Name + ctx.array_elem().IDENT().GetText());
                 var id = EmitExpr(ctx.array_elem().expr(0));
                 arr.Load();
                 id.Load();
@@ -439,7 +460,6 @@ namespace l1
             if (ctx.op_func_call() != null) return EmitFuncCall(ctx.op_func_call());
             return null;
         }
-
 
         private ObjectDef EmitNewArray(L1Parser.Atom_exprContext atom)
         {
@@ -495,24 +515,69 @@ namespace l1
             return null;
         }
 
+        private ObjectDef EmitWhile(L1Parser.Op_while_preContext ctx)
+        {
+            var il = CurrentFun_.MethodBuilder.GetILGenerator();
+            var checkL = il.DefineLabel();
+            var exitL = il.DefineLabel();
+            il.MarkLabel(checkL);
+            var expr = EmitExpr(ctx.expr());
+            expr.Load();
+            il.Emit(OpCodes.Brfalse, exitL);
+            foreach (var stmt in ctx.function_body().stmt())
+            {
+                EmitStmt(stmt);
+            }
+            il.Emit(OpCodes.Br, checkL);
+            il.MarkLabel(exitL);
+
+            return null;
+        }
+        
+        private ObjectDef EmitIf(L1Parser.Op_ifContext ctx)
+        {
+            var exitLs = new List<Label>();
+
+            var il = CurrentFun_.MethodBuilder.GetILGenerator();
+            for (var i = 0; i < ctx.expr().Length; i++)
+            {
+                var cond = EmitExpr(ctx.expr(i));
+                cond.Load();
+                var exitL = il.DefineLabel();
+                var elseL = il.DefineLabel();
+                il.Emit(OpCodes.Brfalse, elseL);
+                foreach (var f in ctx.function_body(i).stmt()) EmitStmt(f);
+                il.Emit(OpCodes.Br, exitL);
+                il.MarkLabel(elseL);
+                exitLs.Add(exitL);
+            }
+
+            if (ctx.function_body().Length > ctx.expr().Length)
+                foreach (var f in ctx.function_body(ctx.function_body().Length - 1).stmt())
+                    EmitStmt(f);
+
+            foreach (var exitL in exitLs) il.MarkLabel(exitL);
+            return null;
+        }
+
         #region Constants & Statics
 
         #endregion
 
         #region Fields
 
-        private IParseTree Tree_;
+        private readonly IParseTree Tree_;
 
-        private string FileName_;
-        private string ProgramName_;
-        private AssemblyName AssemblyName_;
-        private AssemblyBuilder AssemblyBuilder_;
-        private ModuleBuilder ModuleBuilder_;
+        private readonly string FileName_;
+        private readonly string ProgramName_;
+        private readonly AssemblyName AssemblyName_;
+        private readonly AssemblyBuilder AssemblyBuilder_;
+        private readonly ModuleBuilder ModuleBuilder_;
 
         private MethodDef CurrentFun_;
 
-        private TypeBuilder TypeBuilder_;
-        private Dictionary<string, MethodDef> Functions_; // name : def
+        private readonly TypeBuilder TypeBuilder_;
+        private readonly Dictionary<string, MethodDef> Functions_; // name : def
 
         private Dictionary<string, ArgObjectDef> CurrentArgs_;
 

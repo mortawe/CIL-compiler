@@ -168,6 +168,18 @@ public partial class L1BaseListener : IL1Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitOp_if([NotNull] L1Parser.Op_ifContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="L1Parser.op_for"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterOp_for([NotNull] L1Parser.Op_forContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="L1Parser.op_for"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitOp_for([NotNull] L1Parser.Op_forContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.op_while_pre"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

@@ -141,6 +141,16 @@ public interface IL1Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitOp_if([NotNull] L1Parser.Op_ifContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="L1Parser.op_for"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterOp_for([NotNull] L1Parser.Op_forContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="L1Parser.op_for"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitOp_for([NotNull] L1Parser.Op_forContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="L1Parser.op_while_pre"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

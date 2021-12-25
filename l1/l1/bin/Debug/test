@@ -3,6 +3,7 @@ define  int array TestMul(int A, int B)
  int a := Test(10);
  int c := A * B;
  int array huita := new int[10];
+ huita[0] := 99;
  return huita;
 end
 
@@ -12,12 +13,19 @@ define int Test(int a)
 end
 
 define Main()
- int b := 10;
- b := Test(100);
- int array h := new int[1];
- h := TestMul(1,2);
- h[0] := 1;
- b := h[0] * 100;
+ int h := TestMul(1,2);
+ int b;
+ if 5 < h[0] xor T then 
+    b := 2;
+ elseif h[0] >= 2 and F  or T then
+    b := 3;
+ else
+    b := 6;
+ end;
+ while b < 100 do
+    b := b + 1;
+ end;
+ 
  return ;
 end
 
