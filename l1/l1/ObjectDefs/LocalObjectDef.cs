@@ -6,7 +6,7 @@ namespace l1.ObjectDefs
 {
     public class LocalObjectDef : ObjectDef
     {
-        protected static List<LocalObjectDef> Locals_;
+        private static List<LocalObjectDef> _locals;
 
         protected List<LocalObjectDef> DuplicatedLocals = new List<LocalObjectDef>();
         public string Name;
@@ -49,30 +49,30 @@ namespace l1.ObjectDefs
             var duplicatedLocals = new List<LocalObjectDef>();
             var number = 0;
             int i;
-            for (i = 0; i < Locals_.Count; i++)
-                if (Locals_[i].Scope == enmObjectScope.Local && Locals_[i].Name == name && name != "")
+            for (i = 0; i < _locals.Count; i++)
+                if (_locals[i].Scope == enmObjectScope.Local && _locals[i].Name == name && name != "")
                 {
-                    duplicatedLocals.Add(Locals_[i]);
-                    Locals_[i].IsUsed = false;
+                    duplicatedLocals.Add(_locals[i]);
+                    _locals[i].IsUsed = false;
                 }
 
-            for (i = 0; i < Locals_.Count; i++)
-                if (Locals_[i].Type.Name == type.Name && !Locals_[i].IsUsed)
+            for (i = 0; i < _locals.Count; i++)
+                if (_locals[i].Type.Name == type.Name && !_locals[i].IsUsed)
                 {
                     number = i;
-                    Locals_[i] = new LocalObjectDef(type, number, name, ElemType);
+                    _locals[i] = new LocalObjectDef(type, number, name, ElemType);
                     break;
                 }
 
-            if (i == Locals_.Count)
+            if (i == _locals.Count)
             {
                 var localVar = Generator_.DeclareLocal(type);
                 number = localVar.LocalIndex;
-                Locals_.Add(new LocalObjectDef(type, number, name, ElemType));
+                _locals.Add(new LocalObjectDef(type, number, name, ElemType));
             }
 
             EmitSaveToLocal(number);
-            return Locals_[number];
+            return _locals[number];
         }
 
         public override void Load()
@@ -90,8 +90,8 @@ namespace l1.ObjectDefs
         {
             for (var i = 0; i < DuplicatedLocals.Count; i++)
             {
-                Locals_[DuplicatedLocals[i].Number] = DuplicatedLocals[i];
-                Locals_[DuplicatedLocals[i].Number].IsUsed = true;
+                _locals[DuplicatedLocals[i].Number] = DuplicatedLocals[i];
+                _locals[DuplicatedLocals[i].Number].IsUsed = true;
             }
 
             IsUsed = false;
@@ -100,14 +100,14 @@ namespace l1.ObjectDefs
         public static void InitGenerator(ILGenerator generator)
         {
             Generator_ = generator;
-            Locals_ = new List<LocalObjectDef>();
+            _locals = new List<LocalObjectDef>();
         }
 
         public static LocalObjectDef GetLocalObjectDef(string Name)
         {
-            for (var i = 0; i < Locals_.Count; i++)
-                if (Locals_[i].IsUsed && Locals_[i].Name == Name)
-                    return Locals_[i];
+            for (var i = 0; i < _locals.Count; i++)
+                if (_locals[i].IsUsed && _locals[i].Name == Name)
+                    return _locals[i];
             return null;
         }
     }

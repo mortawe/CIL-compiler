@@ -12,17 +12,14 @@ namespace l1
         {
             try
             {
-                var input = File.ReadAllText("test");
-                Console.WriteLine(input);
+                var input = File.ReadAllText(args[0]);
                 var stream = CharStreams.fromString(input);
                 var lexer = new L1Lexer(stream);
                 ITokenStream tokens = new CommonTokenStream(lexer);
                 var parser = new L1Parser(tokens);
                 parser.BuildParseTree = true;
                 IParseTree tree = parser.program();
-                // Console.Write(tree.ToStringTree());
-                var path = "compiled.exe";
-                // var moduleName = Path.GetFileNameWithoutExtension(path) + ".exe";
+                var path = Path.GetFileNameWithoutExtension(args[0]) + ".exe";
                 var moduleName = path;
                 var cilGen = new CilGenerator(tree, moduleName);
                 cilGen.Generate();
